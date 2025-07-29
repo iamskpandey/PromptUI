@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sandbox</title>
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    #root {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <style id="style-container"></style>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/javascript">
+    let reactRoot = null; 
+
+    window.addEventListener('message', (event) => {
+      if (event.origin !== window.location.origin) {
+        console.warn(`Ignored message from untrusted origin: ${event.origin}`);
+        return;
+      }
+
+      const { tsx, css } = event.data;
+
+      try {
+        document.getElementById('style-container').innerHTML = css;
+
+        const transformedCode = Babel.transform(tsx, {
+          presets: ['react', 'typescript'],
+          filename: 'component.tsx'
+        }).code;
+
+        const wrappedCode = `
+          (() => {
+            ${transformedCode}
+            // The component should be the last expression or assigned to a variable
+            if (typeof MyComponent !== 'undefined') return MyComponent;
+            // Fallback: try to find any function that looks like a component
+            const vars = Object.keys(this).filter(key => 
+              typeof this[key] === 'function' && 
+              key !== 'React' && 
+              key !== 'ReactDOM'
+            );
+            return this[vars[vars.length - 1]];
+          })
+        `;
+
+        const Component = eval(wrappedCode).call({});
+
+        if (!reactRoot) {
+          reactRoot = ReactDOM.createRoot(document.getElementById('root'));
+        }
+
+        if (typeof Component === 'function') {
+          reactRoot.render(React.createElement(Component));
+        } else {
+          throw new Error('Generated code did not return a valid React component function');
+        }
+      } catch (e) {
+        const rootDiv = document.getElementById('root');
+        rootDiv.innerHTML = `<pre style="color: red; white-space: pre-wrap; padding: 20px;">${e.message}\n\nStack: ${e.stack}</pre>`;
+        console.error(e);
+      }
+    });
+  </script>
+</body>
+
+</html>
