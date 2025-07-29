@@ -18,7 +18,7 @@ connectDB();
 
 const allowedOrigins = [
   'http://localhost:3000', 
-  'https://prompt-ui-ten.vercel.app/login', 
+  'https://prompt-ui-ten.vercel.app', 
 ];
 
 const corsOptions = {
