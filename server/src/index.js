@@ -19,6 +19,8 @@ connectDB();
 const allowedOrigins = [
   'http://localhost:3000', 
   'https://prompt-ui-ten.vercel.app', 
+  'https://prompt-ui-git-main-skpandeys-projects.vercel.app/',
+  'https://prompt-dzzz5aqxv-skpandeys-projects.vercel.app/'
 ];
 
 const corsOptions = {
