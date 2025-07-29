@@ -68,7 +68,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="h-[calc(100vh-65px)] overflow-hidden">
+    <div className="h-[calc(100vh-65px)] overflow-y-auto">
       <div className="grid grid-cols-12 h-full gap-4 p-4">
         <div className="col-span-3 h-full overflow-hidden">
           <ProjectSidebar />
@@ -78,7 +78,7 @@ export default function HomePage() {
           <div className="h-full bg-gray-900/50 rounded-lg p-4 flex flex-col">
             <h3 className="text-lg font-semibold mb-2 flex-shrink-0">Chat</h3>
             <div className="flex-1 min-h-0 mb-4 overflow-y-auto">
-              <ScrollArea className="h-full pr-2">
+              <ScrollArea className="h-screen pr-2">
                 <div className="space-y-4">
                   {activeProject?.chatHistory.map((msg, i) => (
                     <div
