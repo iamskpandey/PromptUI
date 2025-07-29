@@ -16,8 +16,25 @@ const app = express();
 //Connect to MongoDB
 connectDB();
 
+const allowedOrigins = [
+  'http://localhost:3000', 
+  'https://prompt-ui-ten.vercel.app/login', 
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from your origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+};
+
 // Set up middleware
-app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use(cors(corsOptions));
 app.use(express.json()); // Allow the server to accept JSON in request bodies
 app.use(express.urlencoded({ extended: true })); // Allow the server to accept URL-encoded data
 
