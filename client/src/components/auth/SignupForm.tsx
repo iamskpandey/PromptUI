@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/auth.store";
 import API from "@/services/api";
+import axios from "axios";
 
 export default function SignupForm() {
   const [email, setEmail] = useState("");
@@ -22,9 +23,15 @@ export default function SignupForm() {
       login(data.token, data);
       toast("Success", {description: "Account created successfully!" });
       router.push("/");
-    } catch (error: any) {
+    } catch (error) {
+      let errorMessage = "An unknown error occurred.";
+      if (axios.isAxiosError(error) && error.response) {
+        errorMessage = error.response.data?.message || "An error from the server.";
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       toast("Error",{
-        description: error.response?.data?.message || "An error occurred."
+        description: errorMessage,
       });
     }
   };
